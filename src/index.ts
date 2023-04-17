@@ -4,6 +4,26 @@ import { User } from "./entity/User"
 
 const app = fastify()
 
+app.register(require('@fastify/swagger'), {
+    routePrefix:'/api-docs',
+    exposeRoute: true,
+    swagger: {
+      info: {
+        title: 'Test swagger',
+        description: 'Testing the Fastify swagger API',
+        version: '0.1.0'
+      },
+      externalDocs: {
+        url: 'http://swagger.io',
+        description: 'Find more info'
+      },
+      host: 'localhost:3002',
+      schemes: ['http'],
+    consumes: ['application/json'],
+    produces: ['application/json'],
+    }}) 
+
+
 interface add{
     firstName:string,
     lastName:string,
@@ -63,12 +83,46 @@ interface Params {
     }
   }
 
-app.get('/users',opts1,async(req:fastify.FastifyRequest,res:fastify.FastifyReply)=>{
+app.get('/users' ,{
+    schema: {
+    response: {
+        200: {
+            type: 'object',
+            properties: {
+              firstName:{type:'string',},
+              lastName:{type:'string'},
+              age:{type:'number'}
+            }
+          }
+    }
+  }},async(req:fastify.FastifyRequest,res:fastify.FastifyReply)=>{
          const user = await User.find()
          res.send(user)
 })
 
-app.get('/users/:id',opts1,async(req:fastify.FastifyRequest,res:fastify.FastifyReply)=>{
+app.get('/users/:id',{
+    schema: {
+      params: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            description: 'To get user with id'
+          }
+        },
+        required: ['id']
+      },
+      response: {
+        200: {
+          type: 'object',
+          properties: {
+            firstName:{type:'string',},
+            lastName:{type:'string'},
+            age:{type:'number'}
+          }
+        }
+      }
+    }},async(req:fastify.FastifyRequest,res:fastify.FastifyReply)=>{
     const { id }:any = req.params as Params;
 
     try {
@@ -85,7 +139,7 @@ app.post('/users', opts,async(req:fastify.FastifyRequest,res:fastify.FastifyRepl
          const {firstName,lastName,age}:any= req.body;
          console.log(req.body);
          try {
-            const user = await User.create({
+            const user = await User.save({
                 firstName,
                 lastName,
                 age
@@ -98,7 +152,41 @@ app.post('/users', opts,async(req:fastify.FastifyRequest,res:fastify.FastifyRepl
          }
         })
 
-app.put('/users/:id',async(req:fastify.FastifyRequest,res:fastify.FastifyReply)=>{
+app.put('/users/:id',{
+    schema: {
+      params: {
+        type: 'object',
+        properties: {
+          id: {
+            type: 'string',
+            description: 'user id'
+          }
+        }
+      },
+      body: {
+        type: 'object',
+        properties: {
+          hello: { type: 'string' },
+          obj: {
+            type: 'object',
+            properties: {
+                firstName:{type:'string',},
+                lastName:{type:'string'},
+                age:{type:'number'}
+            },
+            response: {
+                200: {
+                  type: 'object',
+                  properties: {
+                    firstName:{type:'string',},
+                    lastName:{type:'string'},
+                    age:{type:'number'}
+                  }
+                }
+              }
+          }
+        }
+      }}},async(req:fastify.FastifyRequest,res:fastify.FastifyReply)=>{
     const {id}:any= req.params as Params;
     try {
         const user = await User.findOne({where:{id}})
@@ -123,10 +211,10 @@ app.delete('/users/:id',opts3,async(req:fastify.FastifyRequest,res:fastify.Fasti
 AppDataSource.initialize().then(async () => {
     console.log("DB Created Sucessfully")
     app.listen({
-        port: 3000,
+        port: 3002,
         host: 'localhost'
       },()=>{
-        console.log("server is running at port 3000")
+        console.log("server is running at port 3002")
     })
 
 }).catch(error => console.log(error))
