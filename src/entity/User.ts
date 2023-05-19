@@ -4,18 +4,18 @@ import { Entity, PrimaryGeneratedColumn, Column, BaseEntity, PrimaryColumn } fro
 export class User extends BaseEntity{
 
     @PrimaryGeneratedColumn('uuid')
-    id: string
+    id: string;
 
     @Column()
-    Name: string
+    Name: string;
 
     @Column()
-    email: string
+    email: string;
 
     @Column()
-    password: string
+    password: string;
 
     @Column()
-    age: number
+    age: number;
 
 }
