@@ -15,6 +15,6 @@ export class Title extends BaseEntity{
     @UpdateDateColumn()
     updatedat:string;
 
-    @OneToMany(()=>Description,(desc)=>desc.title,{cascade:true,eager:true,onDelete:'CASCADE'})
+    @OneToMany(()=>Description,(desc)=>desc.title,{eager:true,onDelete:'CASCADE'})
     descriprtions:Description[];
 }

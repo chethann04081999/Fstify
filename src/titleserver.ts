@@ -158,12 +158,6 @@ export const deleteidtitle={
         response:{
           200:{
             type:'object',
-            // properties:{
-            //   Name:{type:'string'},
-            //   email:{type:'string'},
-            //   password:{type:'string'},
-            //   age:{type:'number'}
-            // }
           }
         }
       },

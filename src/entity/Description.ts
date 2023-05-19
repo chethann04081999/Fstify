@@ -15,6 +15,6 @@ export class Description extends BaseEntity{
     @UpdateDateColumn()
     updatedat:string;
 
-    @ManyToOne(()=>Title,(title)=>title.descriprtions)
+    @ManyToOne(()=>Title,(title)=>title.descriprtions,{cascade:true,onDelete:'CASCADE'})
     title:Title
 }
